@@ -11,25 +11,30 @@ typedef enum {false, true} bool;
 
 /** Prototypes Declerations **/
 int* readCloseFile(FILE *file, int *arrSize);
-void fuelCalc(int *values, int arrSize);
-int ffuelCalc(int fuel);
-int fuelMaths(int f);
+void readCodes(int *opCodes, int arrSize);
+int readFourCodes(int *fourCodes, int arrSize);
+int doTheMaths(int *fourCodes, int arrSize);
+void replaceCodeWithNewValue(int *opCodes, int index, int newValue);
+bool isOob(int num, int arrSize);
+bool isCode99(int code);
 bool isDigit(char c);
-bool isNewline(char c);
 
 /** Main **/
 int main()
 {
      int arrSize = 0;
-     int *arr=readCloseFile(
+     int *opCodes=readCloseFile(
 	  fopen("C:/input/day2-1",
 	  "r"),
 	  &arrSize);
 
-     for (int i=0; i<arrSize; i++)
+     readCodes(opCodes, arrSize);
+
+     for(int i=0; i<arrSize; i++)
      {
-	  printf("%d\n", arr[i]);
+	  printf("%d\n", opCodes[i]);
      }
+     printf("Value at 0: %d", opCodes[0]);
 
      getchar();
      return(0);
@@ -50,98 +55,145 @@ int* readCloseFile(FILE *file, int *arrSize)
      int arrSizeReal = 0;
      printf("Number size: %d\n\n", numArr);     
      
-     char *buff = malloc(10);
      for(int i=0; feof(file) != 1; i++)
      {
-	  fscanf(file, "%10[^,]%*c", buff);
-	  int buffelems = NELEMS(buff);
-	  int number = 0;
-	  int mult = 1;
-	  int tmp2;
-	  // Maybe in the future something different would
-	  //  be better but this is Advent of Code so 
-	  for (int i=buffelems, tmp2=0; i>-1; i--)
-	  {
-	       if (isDigit(buff[i]))
-	       {
-		    tmp2 = buff[i] - '0';
-		    tmp2 *= mult;
-		    number += tmp2;
-		    mult *= 10;
-	       }
-	  }
-	  //printf("Line number: %s\n", buff);
-	  //printf("number now: %d\n", number);
+	  char *buff = malloc(10);
+          fscanf(file, "%10[^,]%*c", buff);
 
+	  char *tmp;
+	  int number = strtol(buff, &tmp, 10);
+	
 	  if (numArr[i] == endSize)
 	  {
 	       // TODO(shf): Realocate array size if end
-	       //  reached
+	       //  reached. double check the numbers match
 	  }
 	  else
 	  {
 	       numArr[i] = number;
 	       arrSizeReal++;
 	  }
+	  free(buff);
+	  free(tmp);
      }
 
      printf("real array size: %d\n", arrSizeReal);
      
      // Assign file size, close file, and return ptr with
-     // number values*/
+     // number values
      *arrSize = arrSizeReal;
+     // Close file and free ptrs
      fclose(file);
 
      return numArr;
 }
 
-void fuelCalc(int *arr, int arrSize)
+void readCodes(int *opCodes, int arrSize)
 {
-     int total=0;
-
-     for(int i=0; i<arrSize; i++)
+     for(int i=0; i<arrSize; i+=4)
      {
-	  total += ffuelCalc(fuelMaths(arr[i]));
-     }
+	  bool code99 = isCode99(opCodes[i]);
 
-     printf("Total: %d", total);
-     /*printf("%d\n", arrSize);
+	  // Code 99 reached time to stop
+	  if (code99)
+	  {
+	       printf("code 99\n\n");
+	       return;
+	  }
+
+	  // This breaks the oob check
+	  int pos1 = opCodes[i+1];
+	  int pos2 = opCodes[i+2];
+
+	  int fourCodes[] = {opCodes[i],
+			     opCodes[pos1],
+			     opCodes[pos2],
+			     opCodes[i+3]};
+
+	  int value = readFourCodes(fourCodes, arrSize);
+
+	  if(value == -2)
+	  {
+	       // Out of bounds something is wrong
+	       return;
+	  }
+	  if (value != -1)
+	  {
+	       //printf("Value: %d", value);
+	       replaceCodeWithNewValue(opCodes, fourCodes[3], value);
+	  }
+	  printf("\n");
+     }
+     /*
      for (int i=0; i<arrSize; i++)
      {
-	  printf("Array Number: %d\n", arr[i]);
-     }*/
-}
-
-int ffuelCalc(int fuel)
-{
-     int tmpfuel = fuelMaths(fuel);
-     int ffuel = 0;
-
-     while(tmpfuel > 0)
-     {
-	  ffuel += tmpfuel;
-	  tmpfuel = fuelMaths(tmpfuel);
+	  printf("%d\n", opCodes[i]);
      }
-     return (fuel+ffuel);
+     printf("\nCode at pos 0: %d", opCodes[0]);*/
 }
 
-int fuelMaths(int f)
+int readFourCodes(int *fourCodes, int arrSize)
 {
-     return ((floor(f)/3) - 2);
+     for(int i=0; i<4; i++)
+     {
+	  /*bool oob = isOob(fourCodes[i], arrSize);
+	  if (oob)
+	  {
+	       printf("Code %d is out of bounds!\n", fourCodes[i]);
+	       return(-2);
+	  }*/
+	  printf("code: %d\n", fourCodes[i]);
+     }
+     return(doTheMaths(fourCodes, arrSize));
 }
 
-bool isDigit(char c)
+int doTheMaths(int *fourCodes, int arrSize)
 {
-     if(c >= '0' && c <='9')
+     int value = -1;
+
+     switch(fourCodes[0])
+     {
+     case 1:
+	  value = fourCodes[1] + fourCodes[2];
+	  break;
+     case 2:
+	  value = fourCodes[1] * fourCodes[2];
+	  break;
+     default:
+	  //printf("Unknown Value\n");
+	  break;
+     }
+
+     printf("Value: %d", value);
+     return(value);
+}
+
+void replaceCodeWithNewValue(int *opCodes, int index, int newValue)
+{
+     opCodes[index] = newValue;
+}
+
+bool isOob(int num, int arrSize)
+{
+     if(num >= arrSize)
      {
 	  return true;
      }
      return false;
 }
 
-bool isNewline(char c)
+bool isCode99(int code)
 {
-     if(c == '\n')
+     if(code==99)
+     {
+	  return true;
+     }
+     return false;
+}
+
+bool isDigit(char c)
+{
+     if(c >= '0' && c <='9')
      {
 	  return true;
      }

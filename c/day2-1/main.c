@@ -59,7 +59,8 @@ int* readCloseFile(FILE *file, int *arrSize)
      {
 	  char *buff = malloc(10);
           fscanf(file, "%10[^,]%*c", buff);
-
+	  // TODO(shf): Look deeper into fscanf
+	  //  and what strtol does
 	  char *tmp;
 	  int number = strtol(buff, &tmp, 10);
 	

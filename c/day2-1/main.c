@@ -44,25 +44,6 @@ int* readCloseFile(FILE *file, int *arrSize)
      rewind(file);
      printf("File Size: %d\n", fs);
 
-     char c[1000];
-     int nsize = 0;
-/*
-     char *buff = malloc(fs);
-     
-     for (int i=0; ; i++)
-     {
-	  // Use this for day 2
-	  // Get the Character
-	  fscanf(file, "%10[^,]%*c", buff);
-	  
-	  printf("%s\n", buff);
-	  // End of File
-	  if (feof(file))
-	  {
-	       break;
-	  }
-      }*/
-
      // Allocate
      int *numArr = malloc(fs);
      int endSize = NELEMS(numArr);

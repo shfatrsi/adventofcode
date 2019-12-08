@@ -18,6 +18,7 @@ void replaceCodeWithNewValue(int *opCodes, int index, int newValue);
 bool isOob(int num, int arrSize);
 bool isCode99(int code);
 bool isDigit(char c);
+int* copyCodes(int *orgCodes, int arrSize);
 
 /** Main **/
 int main()
@@ -28,14 +29,25 @@ int main()
 	  "r"),
 	  &arrSize);
 
-     readCodes(opCodes, arrSize);
+     int answer = 0;
+     int result = 0;
 
-     for(int i=0; i<arrSize; i++)
+     int pos1 = 0;
+     int pos2 = 0;
+     for(int i=0; result!=19690720 || i==99999;i++)
      {
-	  printf("%d\n", opCodes[i]);
-     }
-     printf("Value at 0: %d", opCodes[0]);
+	  int *cCodes=copyCodes(opCodes, arrSize);
 
+	  readCodes(cCodes, arrSize);
+	  //printf("zeroth value: %d\n", cCodes[0]);
+
+	  if (cCodes[0] == 19690720)
+	  {
+	       answer = cCodes[0];
+	  }
+	  free(cCodes);
+     }
+     printf("Answer: %d\n", answer);
      getchar();
      return(0);
 }
@@ -47,13 +59,16 @@ int* readCloseFile(FILE *file, int *arrSize)
      // File size now know
      int fs = ftell(file);
      rewind(file);
+     // For some reason not having this printf
+     //  causes my program to crash and there are
+     //  a bunch of \n inbetween each printf in main wut
      printf("File Size: %d\n", fs);
 
      // Allocate
      int *numArr = malloc(fs);
      int endSize = NELEMS(numArr);
      int arrSizeReal = 0;
-     printf("Number size: %d\n\n", numArr);     
+     //printf("Number size: %d\n\n", numArr);
      
      for(int i=0; feof(file) != 1; i++)
      {
@@ -78,7 +93,7 @@ int* readCloseFile(FILE *file, int *arrSize)
 	  free(tmp);
      }
 
-     printf("real array size: %d\n", arrSizeReal);
+     //printf("real array size: %d\n", arrSizeReal);
      
      // Assign file size, close file, and return ptr with
      // number values
@@ -98,7 +113,7 @@ void readCodes(int *opCodes, int arrSize)
 	  // Code 99 reached time to stop
 	  if (code99)
 	  {
-	       printf("code 99\n\n");
+	       //printf("code 99\n\n");
 	       return;
 	  }
 
@@ -123,14 +138,7 @@ void readCodes(int *opCodes, int arrSize)
 	       //printf("Value: %d", value);
 	       replaceCodeWithNewValue(opCodes, fourCodes[3], value);
 	  }
-	  printf("\n");
      }
-     /*
-     for (int i=0; i<arrSize; i++)
-     {
-	  printf("%d\n", opCodes[i]);
-     }
-     printf("\nCode at pos 0: %d", opCodes[0]);*/
 }
 
 int readFourCodes(int *fourCodes, int arrSize)
@@ -143,7 +151,7 @@ int readFourCodes(int *fourCodes, int arrSize)
 	       printf("Code %d is out of bounds!\n", fourCodes[i]);
 	       return(-2);
 	  }*/
-	  printf("code: %d\n", fourCodes[i]);
+	  //printf("code: %d\n", fourCodes[i]);
      }
      return(doTheMaths(fourCodes, arrSize));
 }
@@ -165,7 +173,7 @@ int doTheMaths(int *fourCodes, int arrSize)
 	  break;
      }
 
-     printf("Value: %d", value);
+     //printf("Value: %d", value);
      return(value);
 }
 
@@ -199,4 +207,16 @@ bool isDigit(char c)
 	  return true;
      }
      return false;
+}
+
+
+int* copyCodes(int *orgCodes, int arrSize)
+{
+     int *codes = malloc(arrSize);
+
+     for(int i=0; i<arrSize; i++)
+     {
+	  codes[i] = orgCodes[i];
+     }
+     return codes;
 }

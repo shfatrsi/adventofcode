@@ -29,24 +29,65 @@ int main()
 	  "r"),
 	  &arrSize);
 
+     int weWin = 0;
      int answer = 0;
-     int result = 0;
 
-     int pos1 = 0;
-     int pos2 = 0;
-     for(int i=0; result!=19690720 || i==99999;i++)
+     int try=0;
+     int verb=0;
+     int noun=0;
+
+     for(; weWin!=19690720 || try==3;)
      {
 	  int *cCodes=copyCodes(opCodes, arrSize);
 
+	  cCodes[1]=noun;
+	  cCodes[2]=verb;
+
 	  readCodes(cCodes, arrSize);
 	  //printf("zeroth value: %d\n", cCodes[0]);
-
-	  if (cCodes[0] == 19690720)
+	
+	  if(cCodes[0] == 19690720)
 	  {
-	       answer = cCodes[0];
+	       weWin = cCodes[0];
+	       printf("Noun: %d\n", noun);
+	       printf("Verb: %d\n", verb);
+	       answer = 100 * noun + verb;
 	  }
+
 	  free(cCodes);
+
+	  // brute force count up to 99 for each
+	  // for all noun&&verb combo's. This is a
+	  // pretty bad way of doing this
+	  switch(try)
+	  {
+	  case 0:
+	       noun++;
+	       if (noun==100)
+	       {
+		    noun=0;
+		    verb++;
+	       }
+	       break;
+	  case 1:
+	       verb++;
+	       if (verb==100)
+	       {
+		    verb=0;
+		    noun++;
+	       }
+	       break;
+	  default:
+	       break;
+	  }
+	  if (verb==99 && noun==99)
+	  {
+	       verb=0;
+	       noun=0;
+	       try++;
+	  }
      }
+     printf("Zeroth: %d\n", weWin);
      printf("Answer: %d\n", answer);
      getchar();
      return(0);

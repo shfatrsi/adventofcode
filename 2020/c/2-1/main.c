@@ -5,8 +5,9 @@
 /** Main **/
 int main(int argc, char **argv, char **env)
 {
-    p_setup(argc, argv, env);
-    p(argc, argv, env);
-    p_free();
+    pSetup(argc, argv, env);
+    //p(argc, argv, env);
+    subRun(argv[2]);
+    pFree();
     return(0);
 }

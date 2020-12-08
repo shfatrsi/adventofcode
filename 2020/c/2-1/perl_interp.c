@@ -10,15 +10,16 @@ static FILE *openFile(void);
 
 static PerlInterpreter *my_perl;
 
-void p_setup(int argc, char **argv, char **env)
+void pSetup(int argc, char **argv, char **env)
 {
     PERL_SYS_INIT3(&argc, &argv, &env);
     my_perl = perl_alloc();
     perl_construct(my_perl);
+    perl_parse(my_perl, NULL, argc, argv, NULL);
     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 }
 
-void p_free(void)
+void pFree(void)
 {
     perl_destruct(my_perl);
     perl_free(my_perl);
@@ -29,6 +30,12 @@ void p(int argc, char **argv, char **env)
 {
     perl_parse(my_perl, NULL, argc, argv, (char **)NULL);
     perl_run(my_perl);
+}
+
+void subRun(char *routineName)
+{
+    char *args[] = { NULL };
+    call_argv(routineName, G_DISCARD | G_NOARGS, args);
 }
 
 void parse(char *fileName)

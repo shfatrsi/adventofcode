@@ -9,10 +9,9 @@ void pSetup(int argc, char **argv, char **env);
 void pFree(void);
 
 /*
- * Call to parse file contents
- *  uhf: To be expanded
+ * Run subroutine that gets content of file lines from the Perl stack
  */
-void parse(char *fileName);
+void fgetLines(char *routineName);
 
 /*
  * Test interpretor program like running perl commands at the command line
@@ -20,6 +19,6 @@ void parse(char *fileName);
 void p(int argc, char **argv, char **env);
 
 /*
- * Run a sub routine practice
+ * Run a subroutine practice with no return values
  */
 void subRun(char *routineName);

@@ -6,15 +6,16 @@ sub read {
     my $filename = 'input';
     open(FH, '<', $filename) or die $!;
 
+    my @lines;
     while(<FH>) {
-        print $_;
+        push(@lines, $_);
     }
     close(FH);
+    return(@lines);
 }
 
 sub showtime {
-    print time;
-    print "\n";
+    print time . "\n";
 }
 
 sub test {

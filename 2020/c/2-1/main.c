@@ -6,8 +6,9 @@
 int main(int argc, char **argv, char **env)
 {
     pSetup(argc, argv, env);
-    //p(argc, argv, env);
-    subRun(argv[2]);
+    fgetLines(argv[2]);
     pFree();
+
+    //getchar();
     return(0);
 }

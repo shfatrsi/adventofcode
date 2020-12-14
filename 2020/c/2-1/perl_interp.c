@@ -5,9 +5,6 @@
 #include <perl.h>
 #include "perl_interp.h"
 
-/** Prototypes **/
-static FILE *openFile(void);
-
 static PerlInterpreter *my_perl;
 
 void pSetup(int argc, char **argv, char **env)
@@ -35,21 +32,32 @@ void p(int argc, char **argv, char **env)
 void subRun(char *routineName)
 {
     char *args[] = { NULL };
-    call_argv(routineName, G_DISCARD | G_NOARGS, args);
+    int count = call_argv(routineName, G_DISCARD | G_NOARGS, args);
 }
 
-void parse(char *fileName)
+void fgetLines(char *routineName)
 {
-}
+    dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
 
-static FILE *openFile(void)
-{
-    FILE *fp = fopen("input", "r");
+    char *args[] = { NULL };
+    int count = call_argv(routineName, G_ARRAY | G_NOARGS, args);
+    SPAGAIN;
 
-    if(fp == NULL)
+    STRLEN len;
+    char *s[count];
+    if(count > 0)
     {
-        printf("Failed to open 'input' file.");
-        exit(1);
+        for(int i = 0; i < count; i++)
+        {
+            SV *sv = POPs;
+            s[i] = SvPV(sv, len);
+            printf("%s", s[i]);
+        }
     }
-    return fp;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
 }

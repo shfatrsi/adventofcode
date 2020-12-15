@@ -32,11 +32,15 @@ void p(int argc, char **argv, char **env)
 void subRun(char *routineName)
 {
     char *args[] = { NULL };
-    int count = call_argv(routineName, G_DISCARD | G_NOARGS, args);
+    call_argv(routineName, G_DISCARD | G_NOARGS, args);
 }
 
-void fgetLines(char *routineName)
+FileContent *fgetLines(char *routineName)
 {
+    // Consideration to avoid two for loops. Have another
+    //  subroutine that gets called that returns file content size
+    //  and pop that before the string. Is it better than 2 for loops...
+    //  ¯\_(ツ)_/¯
     dSP;
     ENTER;
     SAVETMPS;
@@ -47,17 +51,35 @@ void fgetLines(char *routineName)
     SPAGAIN;
 
     STRLEN len;
-    char *s[count];
+    char *temp[count];
+    int totalChars = 0;
     if(count > 0)
     {
-        for(int i = 0; i < count; i++)
+        for(int i = count - 1; i >= 0; i--)
         {
             SV *sv = POPs;
-            s[i] = SvPV(sv, len);
-            printf("%s", s[i]);
+            temp[i] = SvPV(sv, len);
+            totalChars += strlen(temp[i]);
         }
     }
+    else
+    {
+        printf("I'm too lazy to handle errors right now just die");
+        exit(1);
+    }
+    FileContent *c;
+    c = malloc(sizeof(*c) + (sizeof(int) * (totalChars)));
+    c->t_chars = totalChars;
+    c->t_lines = count;
+
+    for(int i = 0; i < count; i++)
+    {
+        c->lines[i] = strdup(temp[i]);
+    }
+
     PUTBACK;
     FREETMPS;
     LEAVE;
+
+    return c;
 }

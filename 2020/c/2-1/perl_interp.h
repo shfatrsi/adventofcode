@@ -1,3 +1,5 @@
+#include "structs.h"
+
 /*
  * Call before allocating for perl interpreter setup
  */
@@ -11,7 +13,7 @@ void pFree(void);
 /*
  * Run subroutine that gets content of file lines from the Perl stack
  */
-void fgetLines(char *routineName);
+FileContent *fgetLines(char *routineName);
 
 /*
  * Test interpretor program like running perl commands at the command line

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "perl_interp.h"
+#include "process.h"
 
 /** Prototypes **/
 void freeFileContent(FileContent *c);

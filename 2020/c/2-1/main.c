@@ -14,10 +14,7 @@ int main(int argc, char **argv, char **env)
     FileContent *c = fgetLines(argv[2]);
     pFree();
 
-    for(int i = 0; i < c->t_lines; i++)
-    {
-        printf("%d - %s", i, c->lines[i]);
-    }
+    process(c);
 
     freeFileContent(c);
     return(0);

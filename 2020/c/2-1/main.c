@@ -8,6 +8,8 @@
 void freeFileContent(FileContent *c);
 
 /** Main **/
+// To run the program after compiling the code do -
+//  ./main read.pl read
 int main(int argc, char **argv, char **env)
 {
     pSetup(argc, argv, env);
